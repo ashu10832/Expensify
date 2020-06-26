@@ -7,7 +7,6 @@ import ExpenseListFilter from './ExpenseListFilters'
 const ExpenseList = (props) =>(
     <div>
 
-    <ExpenseListFilter />
     <h1>Expense List {props.expenses.length}</h1>
     {props.expenses.map((expense)=>(
         <ExpenseListItem key={expense.id} {...expense}/>
