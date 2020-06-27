@@ -1,9 +1,14 @@
 const path = require('path')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 
-// entry -> output
+module.exports = (env) => {
+  console.log(env)
+  const isProductiion = env === 'production'
 
-module.exports = {
+  const CSSExtract = new ExtractTextPlugin('styles.css')
+
+  return {
     entry:'./src/app.js',
     output: {
       path: path.resolve(__dirname, 'public'),
@@ -19,11 +24,25 @@ module.exports = {
         },
         {
           test: /\.s?css$/,
-          use: ['style-loader', 'css-loader','sass-loader'],
-
+          use: ExtractTextPlugin.extract({
+            use:[
+              {
+                loader:'css-loader',
+                options:{
+                  sourceMap:true
+                }
+              },{
+                loader:'sass-loader',
+                options:{
+                  sourceMap:true
+                }
+              },
+            ]
+          }),
         }]
       },
-    devtool:'eval-cheap-module-source-map',
+      plugins:[CSSExtract],
+    devtool:isProductiion? 'source-map' :'inline-source-map',
     devServer: {
       contentBase: path.join(__dirname, 'public'),
       compress: true,
@@ -32,5 +51,37 @@ module.exports = {
       historyApiFallback: true
     }
 
+  }
 }
+
+// module.exports = {
+//     entry:'./src/app.js',
+//     output: {
+//       path: path.resolve(__dirname, 'public'),
+//       filename: 'bundle.js',
+//       publicPath : '/'
+//     },
+//     mode: 'development',
+//     module:{
+//       rules:[{
+//         test: /\.js$/,
+//         exclude:/node_modules/,
+//         use: ["babel-loader"]
+//         },
+//         {
+//           test: /\.s?css$/,
+//           use: ['style-loader', 'css-loader','sass-loader'],
+
+//         }]
+//       },
+//     devtool:'eval-cheap-module-source-map',
+//     devServer: {
+//       contentBase: path.join(__dirname, 'public'),
+//       compress: true,
+//       watchContentBase: true,
+//       port: 9000,
+//       historyApiFallback: true
+//     }
+
+// }
 
